@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "phototask"
+version = "0.1.0"
+description = ""
+authors = ["Odega <eirikoedegaard@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.0.2"
+ollama = "^0.1.7"
+llama-index-llms-ollama = "^0.1.2"
+llama-index = "^0.10.20"
+flask-cors = "^4.0.0"
+v = "^1"
+langchain-community = "^0.0.28"
+langchain = "^0.1.12"
+ipython = "^8.22.2"
+pillow = "^10.2.0"
+anthropic = "^0.20.0"
+poetry-plugin-export = "^1.7.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

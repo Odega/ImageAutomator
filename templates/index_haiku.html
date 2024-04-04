@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Construction Image Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+    margin: 20px;
+    background-color: #f8f9fa; /* Light grey background */
+        }
+        h1, h2 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
+    color: #0056b3;
+    margin-bottom: 10px; /* Reduced bottom margin */
+}
+        /* Style for the columns */
+        .column {
+    /* Removed specific widths to handle it with card class */
+    padding: 10px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px; /* Space between cards */
+}
+
+.left {
+    flex: 0 0 300px; /* This sets the left column to a fixed width of 300px */
+    padding: 10px; /* Add padding for spacing */
+}
+
+.right {
+    flex-grow: 1; /* This allows the right column to grow and fill the remaining space */
+    padding: 10px; /* Add padding for spacing */
+}
+
+@media screen and (max-width: 800px) {
+    .left, .right {
+        /*flex-basis: 100%; /* Both columns take full width on smaller screens */
+        /*flex: none; /* Override any previous flex settings */
+        /*flex-wrap: wrap; /* Allows for wrapping on smaller screens */
+        
+    }
+    .row{
+        flex-direction: column;
+    }
+}
+
+        .analysis-result {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        p {
+            margin: 10px 0;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        img {
+            width: 300px;  /* Adjust the width as needed */
+            height: auto;  /* Maintain the aspect ratio */
+        }
+        .dropzone {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        size:50%;
+        float: center;
+    }
+    .dropzone.dragover {
+        background-color: #f0f0f0;
+    }
+    .file-count {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+    .analyze-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .analyze-btn:hover {
+        background-color: #45a049;
+    }
+    .card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* subtle shadow */
+    overflow: hidden; /* Ensures content fits inside border radius */
+    margin-bottom: 20px; /* Space between cards */
+}
+
+.card-image {
+    width: 100%; /* Full width */
+    height: auto;
+    display: block; /* Removes bottom space under image */
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 24px; /* Larger title */
+    color: #333;
+}
+
+.card-text {
+    font-size: 16px; /* Larger text */
+    color: #666;
+    line-height: 1.6; /* More readable line height */
+}
+
+.tag-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tag-list li {
+    display: inline-block;
+    background-color: #e9ecef;
+    border-radius: 16px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    font-size: 14px;
+}
+/* Further responsive design adjustments as necessary */
+@media screen and (max-width: 600px) {
+    .card {
+        margin: 10px;
+    }
+}
+    .loader {
+    display: none; /* Ensure you change this to block when you want to show the loader */
+    position: fixed;
+    z-index: 9999;
+    animation: moveAround 5s linear infinite;
+}
+
+@keyframes moveAround {
+    0% {
+        top: 0;
+        left: 0;
+        transform: translate(0, 0);
+    }
+    25% {
+        top: 0;
+        left: 90%;
+    }
+    50% {
+        top: 90%;
+        left: 90%;
+    }
+    75% {
+        top: 90%;
+        left: 0;
+    }
+    100% {
+        top: 0;
+        left: 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <h1>Construction Image to Task Automator 🤖</h1>
+
+    <form action="/" method="post" enctype="multipart/form-data">
+        <div class="dropzone" id="dropzone">
+            <p>Drag and drop, or click to select files</p>
+            <br>
+            <p>Max 4 images - jpg, jpeg, png, gif or webp</p>
+            <input type="file" name="images" accept="image/*" multiple required style="display: none;">
+        </div>
+        <div class="file-count" id="fileCount"></div>
+        <br>
+        <input type="submit" value="Create tasks!" class="analyze-btn">
+    </form>
+
+    <div class="loader">
+        <img src="{{ url_for('static', filename='loader/spinner.png') }}" alt="Loading...">
+    </div>
+    <br>
+    <br>
+    {% for item, image_filename in combined_data %}
+    <div class="row card">
+        <div class="column left">
+            <img class="card-image" src="{{ url_for('static', filename='uploads/' + image_filename) }}" alt="{{ item['title'] }}">
+        </div>
+        <div class="column right card-content">
+            <h2 class="card-title">{{ item['title'] }}</h2>
+            <p class="card-text"><strong>Description of Problem:</strong> {{ item['description_of_problem'] }}</p>
+            <p class="card-text"><strong>Possible Solution:</strong> {{ item['possible_solution'] }}</p>
+            <p class="card-text"><strong>Job Role:</strong> {{ item['job_role'] }}</p>
+            <p class="card-text"><strong>Tags:</strong></p>
+            <ul class="tag-list">
+                {% for tag in item['tags'] %}
+                    <li>{{ tag }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+<script>
+       const dropzone = document.getElementById('dropzone');
+    const fileInput = dropzone.querySelector('input[type="file"]');
+    const fileCountElement = document.getElementById('fileCount');
+    const loader = document.querySelector('.loader');
+    let selectedFiles = [];
+
+    dropzone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        const newFiles = Array.from(e.dataTransfer.files);
+        selectedFiles = [...selectedFiles, ...newFiles];
+        updateFileCount();
+    });
+
+    fileInput.addEventListener('change', () => {
+        const newFiles = Array.from(fileInput.files);
+        selectedFiles = [...selectedFiles, ...newFiles];
+        updateFileCount();
+    });
+
+    function updateFileCount() {
+        const fileCount = selectedFiles.length;
+        fileCountElement.textContent = fileCount === 0 ? 'No files selected' : `${fileCount} file(s) selected`;
+        updateFormData();
+    }
+
+    function updateFormData() {
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => {
+            dataTransfer.items.add(file);
+        });
+        fileInput.files = dataTransfer.files;
+    }
+    document.querySelector('form').addEventListener('submit', () => {
+        loader.style.display = 'block';
+    });
+</script>
+</body>
+</html>

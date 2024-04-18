@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hackathon Document Analyzer</title>
+    <title>Construction Image Analysis</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -181,7 +181,7 @@ h2 {
     </style>
 </head>
 <body>
-    <h1>Hackathon Document Analyzerr 🤖</h1>
+    <h1>Construction Image to Task Automator 🤖</h1>
 
     <form action="/" method="post" enctype="multipart/form-data">
         <div class="dropzone" id="dropzone">
@@ -207,14 +207,22 @@ h2 {
     </div>
     <br>
     <br>
-    {% for item, image_filename, json in data %}
+    {% for item, image_filename in combined_data %}
     <div class="row card">
         <div class="column left">
-            <img class="card-image" src="{{ url_for('static', filename='uploads/' + image_filename) }}" alt="Image">
+            <img class="card-image" src="{{ url_for('static', filename='uploads/' + image_filename) }}" alt="{{ item['title'] }}">
         </div>
         <div class="column right card-content">
-            <h2>{{ item }}</h2>
-            <pre>{{ json }}</pre>
+            <h2 class="card-title">{{ item['title'] }}</h2>
+            <p class="card-text"><strong>Description of Problem:</strong> {{ item['description_of_problem'] }}</p>
+            <p class="card-text"><strong>Possible Solution:</strong> {{ item['possible_solution'] }}</p>
+            <p class="card-text"><strong>Job Role:</strong> {{ item['job_role'] }}</p>
+            <p class="card-text"><strong>Tags:</strong></p>
+            <ul class="tag-list">
+                {% for tag in item['tags'] %}
+                    <li>{{ tag }}</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     {% endfor %}
